@@ -39,6 +39,10 @@ android {
             resValue("string", "app_name", "Audile[Debug]")
         }
         release {
+            // Audile+ (Spotify playlist fork): installs next to the official Audile instead of replacing it.
+            applicationIdSuffix = ".plus"
+            versionNameSuffix = "-plus"
+            resValue("string", "app_name", "Audile+")
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(
