@@ -53,7 +53,9 @@ internal class RunEnqueuedRecognition @Inject constructor(
             RecognitionProvider.AcrCloud -> userPreferences.acrCloudConfig
             RecognitionProvider.Shazam -> ShazamConfig
         }
-        val result = recognitionServiceFactory.getService(serviceConfig).recognize(sample)
+        val result = recognitionServiceFactory
+            .getServiceWithFallbacks(serviceConfig, userPreferences.auddConfig, userPreferences.acrCloudConfig)
+            .recognize(sample)
 
         return when (result) {
             is RemoteRecognitionResult.Success -> {

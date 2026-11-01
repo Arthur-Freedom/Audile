@@ -2,6 +2,7 @@
 
 import com.android.build.api.variant.LibraryVariant
 import com.mrsep.musicrecognizer.CargoNdkBuildTask
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.musicrecognizer.android.library)
@@ -9,12 +10,30 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
 }
 
+// Audile+: the AudD and ACRCloud keys from local.properties (the same quoted entries core:datastore
+// reads), for trying the other services when the chosen one finds nothing. They end up readable
+// in the APK, so never share a build that has them.
+val localProperties = Properties().apply {
+    rootProject.file("local.properties").takeIf { it.exists() }?.inputStream()?.use(::load)
+}
+fun builtInKey(name: String) = localProperties.getProperty(name).orEmpty().trim().removeSurrounding("\"").also {
+    require(it.matches(Regex("[A-Za-z0-9._-]*"))) { "$name in local.properties has unexpected characters" }
+}
+
 android {
     namespace = "com.mrsep.musicrecognizer.core.recognition"
     ndkVersion = libs.versions.ndk.get()
 
+    buildFeatures {
+        buildConfig = true
+    }
+
     defaultConfig {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField("String", "AUDD_API_TOKEN", "\"${builtInKey("audd.api.token")}\"")
+        buildConfigField("String", "ACR_HOST", "\"${builtInKey("acr.cloud.host")}\"")
+        buildConfigField("String", "ACR_ACCESS_KEY", "\"${builtInKey("acr.cloud.access.key")}\"")
+        buildConfigField("String", "ACR_ACCESS_SECRET", "\"${builtInKey("acr.cloud.access.secret")}\"")
 
         ndk {
             abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86_64", "x86")

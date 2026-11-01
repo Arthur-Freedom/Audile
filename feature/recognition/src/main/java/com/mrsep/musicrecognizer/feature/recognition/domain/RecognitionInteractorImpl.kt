@@ -69,7 +69,9 @@ internal class RecognitionInteractorImpl @Inject constructor(
                 RecognitionProvider.AcrCloud -> userPreferences.acrCloudConfig
                 RecognitionProvider.Shazam -> ShazamConfig
             }
-            val recognitionService = recognitionServiceFactory.getService(serviceConfig)
+            val recognitionService = recognitionServiceFactory.getServiceWithFallbacks(
+                serviceConfig, userPreferences.auddConfig, userPreferences.acrCloudConfig
+            )
             val recordingScheme = recognitionService.recordingScheme.takeIf { isFallbackRequired }
                 ?: recognitionService.recordingScheme.copy(fallback = null)
 
