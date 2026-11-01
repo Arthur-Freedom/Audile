@@ -19,6 +19,7 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.mrsep.musicrecognizer.core.ui.theme.PlusColors
 import com.mrsep.musicrecognizer.core.strings.R as StringsR
 
 @Composable

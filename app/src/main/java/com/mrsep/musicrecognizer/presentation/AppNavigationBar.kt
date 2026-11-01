@@ -1,6 +1,7 @@
 package com.mrsep.musicrecognizer.presentation
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -13,13 +14,16 @@ import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
@@ -31,6 +35,7 @@ import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.mrsep.musicrecognizer.core.ui.theme.PlusColors
 import com.mrsep.musicrecognizer.core.strings.R as StringsR
 
 @Composable
@@ -39,11 +44,28 @@ fun AppNavigationBar(
     navController: NavController,
     modifier: Modifier = Modifier
 ) {
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = navBackStackEntry?.destination
+    // Audile+: blue like the Recognition screen above it, the theme colours on the other tabs.
+    val isBlue = currentDestination.isDestinationInHierarchy(TopLevelDestination.Recognition)
+    val containerColor by animateColorAsState(
+        if (isBlue) PlusColors.SkyBottom else NavigationBarDefaults.containerColor, label = "barColor"
+    )
+    val itemColors = if (isBlue) {
+        NavigationBarItemDefaults.colors(
+            selectedIconColor = PlusColors.SkyBottom,
+            selectedTextColor = Color.White,
+            indicatorColor = Color.White,
+            unselectedIconColor = Color.White.copy(alpha = 0.85f),
+            unselectedTextColor = Color.White.copy(alpha = 0.85f),
+        )
+    } else {
+        NavigationBarItemDefaults.colors()
+    }
     NavigationBar(
-        modifier = modifier
+        modifier = modifier,
+        containerColor = containerColor,
     ) {
-        val navBackStackEntry by navController.currentBackStackEntryAsState()
-        val currentDestination = navBackStackEntry?.destination
         TopLevelDestination.entries.forEach { destinationEntry ->
             val selected = currentDestination.isDestinationInHierarchy(destinationEntry)
             NavigationBarItem(
@@ -72,6 +94,7 @@ fun AppNavigationBar(
                     )
                 },
                 alwaysShowLabel = false,
+                colors = itemColors,
                 onClick = {
                     navController.navigate(destinationEntry.route) {
                         popUpTo(navController.graph.findStartDestination().id) {

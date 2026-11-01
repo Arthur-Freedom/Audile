@@ -51,6 +51,7 @@ import com.mrsep.musicrecognizer.feature.recognition.service.createScreenCapture
 import com.mrsep.musicrecognizer.feature.recognition.service.toServiceMode
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.milliseconds
+import com.mrsep.musicrecognizer.core.ui.theme.PlusColors
 import com.mrsep.musicrecognizer.core.strings.R as StringsR
 
 internal const val animationDurationButton = 200
@@ -188,13 +189,18 @@ internal fun RecognitionScreen(
         }
     }
 
-    // Audile+: white status bar icons on the blue background, as long as this screen shows.
+    // Audile+: white status bar and navigation buttons on the blue background, as long as this screen shows.
     val view = LocalView.current
     DisposableEffect(view) {
         val insetsController = WindowCompat.getInsetsController(view.context.findActivity().window, view)
         val hadDarkIcons = insetsController.isAppearanceLightStatusBars
+        val hadDarkNavButtons = insetsController.isAppearanceLightNavigationBars
         insetsController.isAppearanceLightStatusBars = false
-        onDispose { insetsController.isAppearanceLightStatusBars = hadDarkIcons }
+        insetsController.isAppearanceLightNavigationBars = false
+        onDispose {
+            insetsController.isAppearanceLightStatusBars = hadDarkIcons
+            insetsController.isAppearanceLightNavigationBars = hadDarkNavButtons
+        }
     }
 
     Box(
