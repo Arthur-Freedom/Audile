@@ -72,7 +72,7 @@ internal class SpotifyPlaylistSyncImplTest {
         val sync = sync(store) { request ->
             when (request.call()) {
                 "GET /v1/me/playlists" -> json("""{"items":[{"id":"x","name":"Liked","owner":{"id":"me"}}],"next":null}""")
-                "POST /v1/me/playlists" -> json("""{"id":"pl1","name":"Audile"}""", HttpStatusCode.Created)
+                "POST /v1/me/playlists" -> json("""{"id":"pl1","name":"Audile+"}""", HttpStatusCode.Created)
                 "POST /v1/playlists/pl1/items" -> json("""{"snapshot_id":"s"}""", HttpStatusCode.Created)
                 else -> error("unexpected ${request.call()}")
             }
@@ -95,12 +95,12 @@ internal class SpotifyPlaylistSyncImplTest {
     }
 
     @Test
-    fun usesAnExistingAudilePlaylistOwnedByTheUser() = runTest {
+    fun usesTheUsersExistingAudilePlusPlaylist() = runTest {
         val store = FakeSpotifyStore(loggedIn())
         val sync = sync(store) { request ->
             when (request.call()) {
                 "GET /v1/me/playlists" -> json(
-                    """{"items":[{"id":"theirs","name":"Audile","owner":{"id":"someone"}},{"id":"mine","name":"Audile","owner":{"id":"me"}}]}"""
+                    """{"items":[{"id":"theirs","name":"Audile+","owner":{"id":"someone"}},{"id":"old","name":"Audile","owner":{"id":"me"}},{"id":"mine","name":"Audile+","owner":{"id":"me"}}]}"""
                 )
                 "POST /v1/playlists/mine/items" -> json("{}", HttpStatusCode.Created)
                 else -> error("unexpected ${request.call()}")

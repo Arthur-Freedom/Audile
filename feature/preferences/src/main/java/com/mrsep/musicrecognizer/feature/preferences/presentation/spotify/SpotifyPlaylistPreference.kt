@@ -119,7 +119,7 @@ private fun SpotifyPlaylistDialog(
                 verticalArrangement = Arrangement.spacedBy(12.dp),
                 modifier = Modifier.verticalScroll(rememberScrollState()),
             ) {
-                Text(text = "Every song Audile+ recognizes is added to your private Spotify playlist “$PLAYLIST_NAME”.")
+                Text(text = "Every song Audile+ recognizes is added to your Spotify playlist “$PLAYLIST_NAME”.")
                 if (state.accountName == null) {
                     if (!state.isClientIdBuiltIn) {
                         Text(text = "This uses your own Spotify developer app (Spotify requires Premium for those).")

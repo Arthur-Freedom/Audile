@@ -208,7 +208,7 @@ internal class SpotifyPlaylistSyncImpl(
             httpClient.post("$API/me/playlists") {
                 bearerAuth(token)
                 contentType(ContentType.Application.Json)
-                setBody(CreatePlaylistJson(PLAYLIST_NAME, isPublic = false, description = "Songs recognized by Audile"))
+                setBody(CreatePlaylistJson(PLAYLIST_NAME, isPublic = false, description = "Songs recognized by Audile+"))
             }
         }
         response.throwIfFailed()

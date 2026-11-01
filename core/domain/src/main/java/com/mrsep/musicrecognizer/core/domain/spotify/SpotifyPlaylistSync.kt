@@ -28,7 +28,7 @@ interface SpotifyPlaylistSync {
 
     companion object {
         const val REDIRECT_URI = "audile://spotify-callback"
-        const val PLAYLIST_NAME = "Audile"
+        const val PLAYLIST_NAME = "Audile+"
     }
 }
 
