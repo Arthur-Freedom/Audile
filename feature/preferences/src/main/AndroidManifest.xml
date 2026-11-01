@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <application>
+        <!-- Spotify login redirect (audile://spotify-callback), see SpotifyPlaylistSync.REDIRECT_URI -->
+        <activity
+            android:name="com.mrsep.musicrecognizer.feature.preferences.presentation.spotify.SpotifyAuthCallbackActivity"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden|uiMode|density"
+            android:excludeFromRecents="true"
+            android:exported="true"
+            android:launchMode="singleTask"
+            android:noHistory="true"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="spotify-callback"
+                    android:scheme="audile" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>

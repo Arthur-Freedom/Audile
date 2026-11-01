@@ -46,8 +46,16 @@ internal class TrackLinksFetchWorker @AssistedInject constructor(
     private val musicBrainzTrackLinksFetcher: MusicBrainzTrackLinksFetcher,
 ) : CoroutineWorker(appContext, workerParams) {
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     override suspend fun doWork(): Result {
+        val result = fetchLinks()
+        // Links are settled (found, or given up on): hand the track to the Spotify playlist sync,
+        // which then prefers the exact Spotify link over a search.
+        if (result !is Result.Retry) SpotifyPlaylistAddWorker.enqueue(appContext, inputData.getTrackId())
+        return result
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private suspend fun fetchLinks(): Result {
         Log.d(TAG, "$TAG started with attempt #$runAttemptCount")
         val trackId = inputData.getTrackId()
         val allowedSources = inputData.getAllowedSources()

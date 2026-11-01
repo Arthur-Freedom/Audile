@@ -27,6 +27,7 @@ import com.mrsep.musicrecognizer.core.ui.components.preferences.PreferenceClicka
 import com.mrsep.musicrecognizer.core.ui.components.preferences.PreferenceGroup
 import com.mrsep.musicrecognizer.core.ui.components.preferences.PreferenceSwitchItem
 import com.mrsep.musicrecognizer.core.ui.resources.titleId
+import com.mrsep.musicrecognizer.feature.preferences.presentation.spotify.SpotifyPlaylistPreference
 import com.mrsep.musicrecognizer.feature.preferences.presentation.serviceconfig.AcrCloudServiceDialog
 import com.mrsep.musicrecognizer.feature.preferences.presentation.serviceconfig.AuddServiceDialog
 import com.mrsep.musicrecognizer.feature.preferences.presentation.serviceconfig.ShazamServiceDialog
@@ -183,6 +184,9 @@ internal fun PreferencesScreen(
                             checked = uiState.preferences.recognizeOnStartup
                         )
                     }
+                    HorizontalDivider(modifier = Modifier.alpha(0.2f))
+                    Spacer(Modifier.height(16.dp))
+                    SpotifyPlaylistPreference()
                     HorizontalDivider(modifier = Modifier.alpha(0.2f))
                     Spacer(Modifier.height(16.dp))
                     PreferenceGroup(title = stringResource(StringsR.string.pref_group_notifications)) {
