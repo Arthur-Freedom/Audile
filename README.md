@@ -1,3 +1,12 @@
+> [!NOTE]
+> **Audile+** is an unofficial fork of [AudileTeam/Audile](https://github.com/AudileTeam/Audile). It adds one feature: **every recognized song is added to a Spotify playlist** (“Audile”, private, created on first use), like Shazam's Spotify sync.
+>
+> - Turn it on in Preferences → Spotify → Spotify playlist, then tap *Log in to Spotify*.
+> - It needs a Spotify developer app (Spotify requires Premium for those) with the redirect URI `audile://spotify-callback`. Put its Client ID in `local.properties` as `spotify.client.id=…` to build it in. Without it, the app asks you to paste the ID.
+> - Audile+ installs next to the official app (app ID `com.mrsep.musicrecognizer.plus`).
+>
+> The code is in [these commits](https://github.com/Arthur-Freedom/Audile/compare/master...spotify-playlist).
+
 > [!WARNING]
 > **Free and Open-Source Android is under threat.**
 >
