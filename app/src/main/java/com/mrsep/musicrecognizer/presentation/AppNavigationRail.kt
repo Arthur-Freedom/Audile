@@ -51,7 +51,7 @@ fun AppNavigationRail(
                         overflow = TextOverflow.Ellipsis
                     )
                 },
-                alwaysShowLabel = false,
+                alwaysShowLabel = true, // Audile+: names always shown, so the icons stay put
                 onClick = {
                     navController.navigate(destinationEntry.route) {
                         popUpTo(navController.graph.findStartDestination().id) {

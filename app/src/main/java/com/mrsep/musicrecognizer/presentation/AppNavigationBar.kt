@@ -93,7 +93,7 @@ fun AppNavigationBar(
                         overflow = TextOverflow.Ellipsis
                     )
                 },
-                alwaysShowLabel = false,
+                alwaysShowLabel = true, // Audile+: names always shown, so the icons stay put
                 colors = itemColors,
                 onClick = {
                     navController.navigate(destinationEntry.route) {

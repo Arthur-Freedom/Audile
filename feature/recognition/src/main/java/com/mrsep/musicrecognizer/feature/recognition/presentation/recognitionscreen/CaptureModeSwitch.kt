@@ -47,11 +47,11 @@ internal fun CaptureModeSwitch(
     ) {
         Segment(
             AudioCaptureMode.Microphone, R.drawable.plus_mic_24, StringsR.string.audio_capture_mode_microphone,
-            hint = "Listens to music playing around you", selected = selected, onSelect = onSelect,
+            hint = "Music around you", selected = selected, onSelect = onSelect,
         )
         Segment(
             AudioCaptureMode.Device, R.drawable.plus_headphones_24, StringsR.string.audio_capture_mode_device,
-            hint = "Listens to music playing on this phone, also in headphones", selected = selected, onSelect = onSelect,
+            hint = "Music on this phone", selected = selected, onSelect = onSelect,
         )
     }
 }
