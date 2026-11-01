@@ -48,8 +48,9 @@ sealed interface SpotifyLoginResult {
 }
 
 sealed interface SpotifyAddResult {
-    data object Added : SpotifyAddResult
-    data object AlreadyAdded : SpotifyAddResult
+    /** [spotifyLink] is the song on Spotify, also when it was found by search instead of a link. */
+    data class Added(val spotifyLink: String) : SpotifyAddResult
+    data class AlreadyAdded(val spotifyLink: String) : SpotifyAddResult
     /** Sync is switched off or the user is logged out. */
     data object Skipped : SpotifyAddResult
     data object NotOnSpotify : SpotifyAddResult

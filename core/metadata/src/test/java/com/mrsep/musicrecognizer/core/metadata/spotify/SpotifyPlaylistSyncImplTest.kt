@@ -66,6 +66,8 @@ internal class SpotifyPlaylistSyncImplTest {
 
     private fun HttpRequestData.call() = "${method.value} ${url.encodedPath}"
 
+    private fun link(spotifyId: String) = "https://open.spotify.com/track/$spotifyId"
+
     @Test
     fun addsTheExactLinkedTrackAndCreatesThePrivatePlaylistOnce() = runTest {
         val store = FakeSpotifyStore(loggedIn())
@@ -79,7 +81,7 @@ internal class SpotifyPlaylistSyncImplTest {
         }
         val linked = track(spotifyLink = "https://open.spotify.com/track/0VjIjW4GlUZAMYd2vXMi3b")
 
-        sync.addTrack(linked) shouldBe SpotifyAddResult.Added
+        sync.addTrack(linked) shouldBe SpotifyAddResult.Added(link("0VjIjW4GlUZAMYd2vXMi3b"))
         requests.map { it.call() } shouldBe listOf("GET /v1/me/playlists", "POST /v1/me/playlists", "POST /v1/playlists/pl1/items")
         requests[1].bodyText() shouldContain """"public":false"""
         requests[2].bodyText() shouldBe """{"uris":["spotify:track:0VjIjW4GlUZAMYd2vXMi3b"]}"""
@@ -87,9 +89,9 @@ internal class SpotifyPlaylistSyncImplTest {
 
         // Same song recognized again: nothing sent. Another song: the playlist is reused.
         requests.clear()
-        sync.addTrack(linked) shouldBe SpotifyAddResult.AlreadyAdded
+        sync.addTrack(linked) shouldBe SpotifyAddResult.AlreadyAdded(link("0VjIjW4GlUZAMYd2vXMi3b"))
         requests shouldBe emptyList()
-        sync.addTrack(track(spotifyLink = "https://open.spotify.com/track/1111111111111111111111")) shouldBe SpotifyAddResult.Added
+        sync.addTrack(track(spotifyLink = "https://open.spotify.com/track/1111111111111111111111")) shouldBe SpotifyAddResult.Added(link("1111111111111111111111"))
         requests.map { it.call() } shouldBe listOf("POST /v1/playlists/pl1/items")
         sync.stateFlow.first().addedCount shouldBe 2
     }
@@ -106,7 +108,7 @@ internal class SpotifyPlaylistSyncImplTest {
                 else -> error("unexpected ${request.call()}")
             }
         }
-        sync.addTrack(track(spotifyLink = "https://open.spotify.com/track/0VjIjW4GlUZAMYd2vXMi3b")) shouldBe SpotifyAddResult.Added
+        sync.addTrack(track(spotifyLink = "https://open.spotify.com/track/0VjIjW4GlUZAMYd2vXMi3b")) shouldBe SpotifyAddResult.Added(link("0VjIjW4GlUZAMYd2vXMi3b"))
         store.dataFlow.value.playlistId shouldBe "mine"
     }
 
@@ -120,9 +122,11 @@ internal class SpotifyPlaylistSyncImplTest {
                 else -> error("unexpected ${request.call()}")
             }
         }
-        sync.addTrack(track(isrc = "GBAYE0601498")) shouldBe SpotifyAddResult.Added
+        sync.addTrack(track(isrc = "GBAYE0601498")) shouldBe SpotifyAddResult.Added(link("FROMISRC0000000000000000"))
         requests[0].url.parameters["q"] shouldBe "isrc:GBAYE0601498"
         requests[1].bodyText() shouldContain "spotify:track:FROMISRC0000000000000000"
+        // Found by search, so the song gets this link for its Spotify button, also when it was added before.
+        sync.addTrack(track(isrc = "GBAYE0601498")) shouldBe SpotifyAddResult.AlreadyAdded(link("FROMISRC0000000000000000"))
     }
 
     @Test
@@ -144,7 +148,7 @@ internal class SpotifyPlaylistSyncImplTest {
                 else -> json("{}", HttpStatusCode.Created)
             }
         }
-        sync.addTrack(track(spotifyLink = "https://open.spotify.com/track/0VjIjW4GlUZAMYd2vXMi3b")) shouldBe SpotifyAddResult.Added
+        sync.addTrack(track(spotifyLink = "https://open.spotify.com/track/0VjIjW4GlUZAMYd2vXMi3b")) shouldBe SpotifyAddResult.Added(link("0VjIjW4GlUZAMYd2vXMi3b"))
         requests.map { it.url.host to it.headers[HttpHeaders.Authorization] } shouldBe listOf(
             "api.spotify.com" to "Bearer old",
             "accounts.spotify.com" to null,

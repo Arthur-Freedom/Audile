@@ -7,6 +7,9 @@ interface TrackMetadataFetchManager {
     fun enqueueTrackLinksFetcher(trackId: String)
     fun enqueueLyricsFetcher(trackId: String)
 
+    /** Audile+: adds the track to the Spotify playlist; the links fetcher does this itself when it runs. */
+    fun enqueueSpotifyPlaylistAdd(trackId: String)
+
     fun isTrackLinksFetcherRunning(trackId: String): Flow<Boolean>
     fun isLyricsFetcherRunning(trackId: String): Flow<Boolean>
     fun isLyricsFetcherEnqueuedOrRunning(trackId: String): Flow<Boolean>

@@ -154,6 +154,9 @@ internal class RecognitionInteractorImpl @Inject constructor(
                             .requiredMusicServices.any { it !in updatedTrack.trackLinks }
                         if (shouldSearchForLinks) {
                             trackMetadataFetchManager.enqueueTrackLinksFetcher(updatedTrack.id)
+                        } else {
+                            // Audile+: no links fetch to wait for, so add to Spotify now.
+                            trackMetadataFetchManager.enqueueSpotifyPlaylistAdd(updatedTrack.id)
                         }
                         if (updatedTrack.lyrics == null) {
                             trackMetadataFetchManager.enqueueLyricsFetcher(updatedTrack.id)

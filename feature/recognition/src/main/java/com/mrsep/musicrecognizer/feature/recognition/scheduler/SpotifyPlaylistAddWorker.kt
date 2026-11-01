@@ -15,6 +15,7 @@ import androidx.work.WorkerParameters
 import com.mrsep.musicrecognizer.core.domain.spotify.SpotifyAddResult
 import com.mrsep.musicrecognizer.core.domain.spotify.SpotifyPlaylistSync
 import com.mrsep.musicrecognizer.core.domain.track.TrackRepository
+import com.mrsep.musicrecognizer.core.domain.track.model.MusicService
 import com.mrsep.musicrecognizer.feature.recognition.scheduler.TrackMetadataFetchManagerImpl.Companion.buildWorkTagForTrack
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -42,8 +43,19 @@ internal class SpotifyPlaylistAddWorker @AssistedInject constructor(
                 Log.w(TAG, result.reason)
                 Result.failure()
             }
+            is SpotifyAddResult.Added -> saveSpotifyLink(trackId, result.spotifyLink)
+            is SpotifyAddResult.AlreadyAdded -> saveSpotifyLink(trackId, result.spotifyLink)
             else -> Result.success()
         }
+    }
+
+    /** Gives the song a Spotify button when the link services had none (it was found by search). */
+    private suspend fun saveSpotifyLink(trackId: String, spotifyLink: String): Result {
+        trackRepository.updateTransform(trackId) { track ->
+            if (MusicService.Spotify in track.trackLinks) track
+            else track.copy(trackLinks = track.trackLinks + (MusicService.Spotify to spotifyLink))
+        }
+        return Result.success()
     }
 
     companion object {

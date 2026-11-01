@@ -33,6 +33,10 @@ internal class TrackMetadataFetchManagerImpl @Inject constructor(
         )
     }
 
+    override fun enqueueSpotifyPlaylistAdd(trackId: String) {
+        SpotifyPlaylistAddWorker.enqueue(appContext, trackId)
+    }
+
     override fun isTrackLinksFetcherRunning(trackId: String): Flow<Boolean> {
         return isWorkerRunning(TrackLinksFetchWorker.buildUniqueWorkerName(trackId))
     }

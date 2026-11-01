@@ -146,7 +146,8 @@ internal class SpotifyPlaylistSyncImpl(
 
     private suspend fun addTrackOrThrow(track: Track): SpotifyAddResult {
         val spotifyId = SpotifyAuth.trackIdFromLinks(track) ?: search(track) ?: return SpotifyAddResult.NotOnSpotify
-        if (spotifyId in store.dataFlow.value.addedTrackIds) return SpotifyAddResult.AlreadyAdded
+        val spotifyLink = "https://open.spotify.com/track/$spotifyId"
+        if (spotifyId in store.dataFlow.value.addedTrackIds) return SpotifyAddResult.AlreadyAdded(spotifyLink)
 
         var playlistId = ensurePlaylist()
         var response = postItems(playlistId, spotifyId)
@@ -158,7 +159,7 @@ internal class SpotifyPlaylistSyncImpl(
         }
         response.throwIfFailed()
         store.update { it.copy(addedTrackIds = (it.addedTrackIds + spotifyId).takeLast(MAX_REMEMBERED_TRACKS)) }
-        return SpotifyAddResult.Added
+        return SpotifyAddResult.Added(spotifyLink)
     }
 
     private suspend fun postItems(playlistId: String, spotifyId: String) = authorized { token ->
