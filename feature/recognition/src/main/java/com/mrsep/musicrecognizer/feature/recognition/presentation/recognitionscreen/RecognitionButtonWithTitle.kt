@@ -11,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -27,13 +28,15 @@ internal fun RecognitionButtonWithTitle(
     soundLevelState: State<Float>,
     onButtonClick: () -> Unit,
     onButtonLongClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    header: @Composable () -> Unit = {},
 ) {
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
+        header()
         AnimatedContent(
             contentAlignment = Alignment.Center,
             targetState = title,
@@ -60,6 +63,7 @@ internal fun RecognitionButtonWithTitle(
                     fontWeight = FontWeight.Medium
                 ),
                 textAlign = TextAlign.Center,
+                color = Color.White,
                 modifier = Modifier
                     .clearAndSetSemantics { }
                     .fillMaxWidth()
@@ -90,10 +94,10 @@ private fun RecognitionButton(
     ) {
         RippleEffect(
             activated = activated,
-            modifier = Modifier.size(256.dp),
+            modifier = Modifier.size(300.dp),
             startOffsetFraction = 0.5f, // Should be a bit less than buttonSize/rippleSize
-            baseColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
-            activatedColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.55f),
+            baseColor = Color.White.copy(alpha = 0.07f),
+            activatedColor = Color.White.copy(alpha = 0.3f),
             circlesCount = 7,
             animationSpeed = 12_000,
             scaleEasing = LinearEasing,
@@ -101,7 +105,7 @@ private fun RecognitionButton(
         )
         BasicRecognitionButton(
             modifier = Modifier
-                .size(176.dp),
+                .size(208.dp),
             activated = activated,
             onClick = onClick,
             onLongClick = onLongClick
@@ -110,8 +114,8 @@ private fun RecognitionButton(
                 activated = activated,
                 soundLevelState = soundLevelState,
                 properties = WaveAnimatedProperties(
-                    baseColor = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.9f),
-                    activatedColor = MaterialTheme.colorScheme.onPrimaryContainer
+                    baseColor = Color.White.copy(alpha = 0.9f),
+                    activatedColor = Color.White
                 ),
                 modifier = Modifier
                     .fillMaxHeight(0.65f)
@@ -155,8 +159,8 @@ private fun BasicRecognitionButton(
             .shadow(
                 elevation = 6.dp,
                 shape = CircleShape,
-                ambientColor = MaterialTheme.colorScheme.primary,
-                spotColor = MaterialTheme.colorScheme.primary
+                ambientColor = PlusColors.SkyBottom,
+                spotColor = PlusColors.SkyBottom
             )
             .clip(CircleShape)
             .combinedClickable(
@@ -171,8 +175,8 @@ private fun BasicRecognitionButton(
                 role = Role.Button
             ),
         shape = CircleShape,
-        color = MaterialTheme.colorScheme.primaryContainer,
-        contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+        color = PlusColors.Frost,
+        contentColor = Color.White
     ) {
         Row(
             modifier = Modifier

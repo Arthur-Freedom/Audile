@@ -19,9 +19,12 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.view.WindowCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -185,9 +188,18 @@ internal fun RecognitionScreen(
         }
     }
 
+    // Audile+: white status bar icons on the blue background, as long as this screen shows.
+    val view = LocalView.current
+    DisposableEffect(view) {
+        val insetsController = WindowCompat.getInsetsController(view.context.findActivity().window, view)
+        val hadDarkIcons = insetsController.isAppearanceLightStatusBars
+        insetsController.isAppearanceLightStatusBars = false
+        onDispose { insetsController.isAppearanceLightStatusBars = hadDarkIcons }
+    }
+
     Box(
         modifier = Modifier
-            .background(color = MaterialTheme.colorScheme.surface)
+            .background(Brush.verticalGradient(listOf(PlusColors.SkyTop, PlusColors.SkyBottom)))
             .fillMaxSize()
             .statusBarsPadding(),
         contentAlignment = Alignment.Center
@@ -223,7 +235,17 @@ internal fun RecognitionScreen(
                     onButtonLongClick = { longClickCaptureMode?.run(::onClick) },
                     activated = recognizeStatus is RecognitionStatus.Recognizing,
                     soundLevelState = soundLevelState,
-                    modifier = Modifier.padding(24.dp)
+                    modifier = Modifier.padding(24.dp),
+                    header = {
+                        // Device audio needs Android 10.
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                            CaptureModeSwitch(
+                                selected = defaultCaptureMode,
+                                onSelect = viewModel::setDefaultCaptureMode,
+                                modifier = Modifier.padding(bottom = 40.dp),
+                            )
+                        }
+                    },
                 )
             }
             AnimatedVisibility(

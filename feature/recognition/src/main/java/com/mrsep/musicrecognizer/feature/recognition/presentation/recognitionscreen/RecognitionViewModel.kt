@@ -8,6 +8,7 @@ import android.os.IBinder
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mrsep.musicrecognizer.core.common.di.MainDispatcher
+import com.mrsep.musicrecognizer.core.domain.preferences.AudioCaptureMode
 import com.mrsep.musicrecognizer.core.domain.preferences.PreferencesRepository
 import com.mrsep.musicrecognizer.core.domain.recognition.model.RecognitionStatus
 import com.mrsep.musicrecognizer.core.domain.recognition.NetworkMonitor
@@ -40,7 +41,7 @@ internal class RecognitionViewModel @Inject constructor(
     @MainScreenStatusHolder private val statusHolder: RecognitionStatusHolder,
     private val recognitionController: ScreenRecognitionController,
     private val vibrationManager: VibrationManager,
-    preferencesRepository: PreferencesRepository,
+    private val preferencesRepository: PreferencesRepository,
     networkMonitor: NetworkMonitor,
 ) : ViewModel() {
 
@@ -70,6 +71,10 @@ internal class RecognitionViewModel @Inject constructor(
 
     fun launchRecognition(audioCaptureServiceMode: AudioCaptureServiceMode) {
         recognitionController.launchRecognition(audioCaptureServiceMode)
+    }
+
+    fun setDefaultCaptureMode(mode: AudioCaptureMode) {
+        viewModelScope.launch { preferencesRepository.setDefaultAudioCaptureMode(mode) }
     }
 
     fun cancelRecognition() {
